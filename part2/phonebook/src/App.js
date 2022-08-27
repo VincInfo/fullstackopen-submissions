@@ -9,6 +9,24 @@ const Filter = (props) => {
   )
 }
 
+const PersonForm = (props) => {
+  return (
+    <div>
+      <form onSubmit={props.addPerson}>
+        <div>
+          name: <input value={props.newName} onChange={props.handleNameChange} />
+        </div>
+        <div>
+          number: <input value={props.newNumber} onChange={props.handleNumberChange} />
+        </div>
+        <div>
+          <button type="submit">add</button>
+        </div>
+      </form>
+    </div>
+  )
+}
+
 const Numbers = (props) => {
   if (props.newSearch === '') {
     const copy = props.value
@@ -42,11 +60,10 @@ const App = () => {
   }
 
   const handleSearchChange = (e) => {
-    console.log(e.target.value)
     setNewSearch(e.target.value)
   }
 
-  const addName = (e) => {
+  const addPerson = (e) => {
     e.preventDefault()
     if (persons.map(e => e.name).includes(newName)) {
       alert(newName + ' is already added to phonebook')
@@ -64,21 +81,23 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Filter newSearch={newSearch} handleSearchChange={handleSearchChange} />
+      <Filter
+        newSearch={newSearch}
+        handleSearchChange={handleSearchChange}
+      />
       <h2>add an new</h2>
-      <form onSubmit={addName}>
-        <div>
-          name: <input value={newName} onChange={handleNameChange} />
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={handleNumberChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <PersonForm
+        newName={newName}
+        handleNameChange={handleNameChange}
+        newNumber={newNumber}
+        handleNumberChange={handleNumberChange}
+        addPerson={addPerson}
+      />
       <h2>Numbers</h2>
-      <Numbers value={persons} newSearch={newSearch} />
+      <Numbers
+        value={persons}
+        newSearch={newSearch}
+      />
     </div>
   )
 }
