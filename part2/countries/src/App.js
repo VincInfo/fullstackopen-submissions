@@ -1,36 +1,44 @@
 import axios from "axios";
 import React from "react";
 import { useState, useEffect } from 'react'
+import getWeather from "./services/apixu";
 
 
-const Weather = ({lat, lon}) => {
-  const [weather, setWeather] = useState()
-  // const lat = props.capital.latlng[0]
-  // const lon = props.capital.latlng[1]
-  const key = "1fc957a15b158eb2e6301c2484357b14"
+const Weather = ({ capital }) => {
+  const [weather, setWeather] = useState([])
+  // Key: ee4fb7d1a1b956e57ad6b8268e247c41
+  // start with: REACT_APP_API_KEY=t0p53cr3t4p1k3yv4lu3 npm start // For Linux/macOS Bash
+  const api_key = process.env.REACT_APP_API_KEY
+  const url = new URL("https://api.openweathermap.org/data/2.5/weather?q=" + capital + "&appid=" + api_key)
+
+  const getWeather = async capital => {
+    const response = await axios.get(url);
+    console.log(response.data)
+    return response.data;
+  };
+
   useEffect(() => {
-    axios
-      .get('https://api.openweathermap.org/data/2.5/weather?lat=35&lon=139&appid=ee4fb7d1a1b956e57ad6b8268e247c41')
-      .then(response => {
-        setWeather(response.data)
-        console.log('hi')
-      })
-  }, [weather, setWeather])
-  //     axios
-  //     .get('https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&exclude={part}&appid=${key}'))
-  //     .then(response => {
-  //     setWeather(response.data)
-  //   })
-  // })
+    getWeather(capital).then(e => setWeather(e))
+  }, [])
 
-  // return (
-  //   <div>
-  //     <p>temperature {weather} Celcius</p> 
-  //   </div> 
-  // )
+  if (weather.length === 0) {
+    return (
+      <p>loading...</p>
+    )
+  } else {
+    const iconURL = "http://openweathermap.org/img/wn/" + weather.weather[0].icon + "@2x.png";
+    return (
+      <div>
+        <h2>Weather in {capital}</h2>
+        <p>Temperature: {weather.main.temp} Celsius</p>
+        <img src={iconURL}/>
+        <p>Wind: {weather.wind.speed} m/s</p>
+      </div>
+    )
+  }
 }
 
-const Country = ({ name, capital, area, population, languages, flagUrl, lat, lon}) => {
+const Country = ({ name, capital, area, population, languages, flagUrl, lat, lon }) => {
   return (
     <div>
       <h1>{name}</h1>
@@ -46,7 +54,7 @@ const Country = ({ name, capital, area, population, languages, flagUrl, lat, lon
         ))}
       </ul>
       <img src={flagUrl} alt="No flag found" height="250" width="350" />
-      <Weather lat={name} lon={lon} />
+      <Weather capital={capital} />
     </div>
   );
 };
@@ -70,8 +78,6 @@ const Countries = (props) => {
           population={buttonCountry.population}
           languages={buttonCountry.languages}
           flagUrl={buttonCountry.flag}
-          lat={buttonCountry.latlng[0]}
-          lon={buttonCountry.latlng[1]}
         />
       </div>
     )
@@ -103,7 +109,7 @@ const Countries = (props) => {
     )
   }
 
-  if (copy.length > 100) {
+  if (copy.length > 1000) {
     return (
       <p>To many matches, specify filter</p>
     )
