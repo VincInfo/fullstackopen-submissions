@@ -3,12 +3,15 @@ import noteService from './services/notes'
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import PersonList from "./components/PersonList";
+import Notification from './components/Notification';
+import './index.css'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newSearch, setNewSearch] = useState('')
+  const [message, setMessage] = useState(null)
 
   useEffect(() => {
     console.log('effect')
@@ -32,6 +35,13 @@ const App = () => {
     setNewSearch(e.target.value)
   }
 
+  const makeMessage = (e) => {
+    setMessage(e)
+    setTimeout(() => {
+      setMessage(null)
+    }, 5000)
+  }
+
   const addPerson = (e) => {
     e.preventDefault()
     const newObj = {
@@ -39,16 +49,25 @@ const App = () => {
       number: newNumber
     }
     if (persons.map(e => e.name).includes(newName)) {
-      if(window.confirm(newName + ' is already added to phonebook, replace the old number with a new one?')){
+      if (window.confirm(newName + ' is already added to phonebook, replace the old number with a new one?')) {
         const previousPerson = persons.find(p => p.name === newName)
-        noteService.update(previousPerson.id, {...previousPerson, number: newNumber})
+        noteService
+          .update(previousPerson.id, { ...previousPerson, number: newNumber })
           .then(response => setPersons(persons.map(p => p.id !== previousPerson.id ? p : response.data)))
+          .catch(error => {
+            makeMessage("Changing number failed")
+          })
+        makeMessage("Number changed successfully")
       }
     } else {
       noteService
         .create(newObj)
         .then(response => {
           setPersons(persons.concat(response.data))
+          makeMessage("Person added successfully")
+        })
+        .catch(error => {
+          makeMessage("Adding person failed")
         })
     }
     setNewName('')
@@ -57,14 +76,22 @@ const App = () => {
 
   const handleDelete = (e) => {
     if (window.confirm('Dou you really want to delete ' + e.target.name + ' from the phonebook?')) {
-      noteService.deletePerson(e.target.id)
-        .then(() => setPersons(persons.filter(p => p.id != e.target.id)))
+      noteService
+        .deletePerson(e.target.id)
+        .then(() => {
+          setPersons(persons.filter(p => p.id != e.target.id))
+          makeMessage("Person deleted successfully")
+        })
+        .catch(error => {
+          makeMessage("Deleting person failed")
+        })
     }
   }
 
   return (
     <div>
-      <h2>Phonebook</h2>
+      <h1>Phonebook</h1>
+      <Notification message={message}/>
       <Filter
         newSearch={newSearch}
         handleSearchChange={handleSearchChange}

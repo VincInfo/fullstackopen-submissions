@@ -1,0 +1,18 @@
+.note {
+    padding-top: 8px;
+    color: grey;
+    font-size: 15px;
+}
+
+.error {
+    color: red;
+}
+
+.confirmMessage {
+    background-color: rgb(209, 208, 208);
+    border-radius: 5px;
+    padding: 8px;
+    margin-bottom: 30px;
+    border-width: 3px;
+    border-style: solid;
+}
