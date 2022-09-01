@@ -1,65 +1,8 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import noteService from './services/notes'
-import notes from './services/notes'
-
-const Filter = (props) => {
-  return (
-    <form>
-      filter shown with <input value={props.newSearch} onChange={props.handleSearchChange} />
-    </form>
-  )
-}
-
-const PersonForm = (props) => {
-  return (
-    <div>
-      <form onSubmit={props.addPerson}>
-        <div>
-          name: <input value={props.newName} onChange={props.handleNameChange} />
-        </div>
-        <div>
-          number: <input value={props.newNumber} onChange={props.handleNumberChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-    </div>
-  )
-}
-
-const Numbers = (props) => {
-  if (props.newSearch === '') {
-    const copy = props.value
-    console.log(copy)
-    console.log(copy.find(e => e.name === 'Alex'))
-    copy.forEach(element => {
-      console.log(element.name)
-    });
-    return (
-      <div>
-        {copy.map(e =>
-          <div key={e.name} number={e.number} name={e.name}>
-            {e.name}: {e.number}
-            <button key={e.name} onClick={props.handleDelete} name={e.name} id={e.id}>delete</button>
-          </div>)}
-      </div>
-    )
-  } else {
-    const copy = props.value.filter(e => e.name.includes(props.newSearch))
-    console.log(copy)
-    return (
-      <div>
-        {copy.map(e =>
-          <div key={e.name} number={e.number} name={e.name}>
-            {e.name}: {e.number}
-            <button key={e.name} onClick={props.handleDelete} name={e.name} id={e.id}>delete</button>
-          </div>)}
-      </div>
-    )
-  }
-}
+import Filter from "./components/Filter";
+import PersonForm from "./components/PersonForm";
+import PersonList from "./components/PersonList";
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -134,8 +77,8 @@ const App = () => {
         handleNumberChange={handleNumberChange}
         addPerson={addPerson}
       />
-      <h2>Numbers</h2>
-      <Numbers
+      <h2>Persons</h2>
+      <PersonList
         value={persons}
         newSearch={newSearch}
         handleDelete={handleDelete}
