@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-// import Persons from './persons'
+import noteService from './services/notes'
+import notes from './services/notes'
 
 const Filter = (props) => {
   return (
@@ -31,16 +32,30 @@ const PersonForm = (props) => {
 const Numbers = (props) => {
   if (props.newSearch === '') {
     const copy = props.value
+    console.log(copy)
+    console.log(copy.find(e => e.name === 'Alex'))
+    copy.forEach(element => {
+      console.log(element.name)
+    });
     return (
       <div>
-        {copy.map(e => <p key={e.name}>{e.name}: {e.number}</p>)}
+        {copy.map(e =>
+          <div key={e.name} number={e.number} name={e.name}>
+            {e.name}: {e.number}
+            <button key={e.name} onClick={props.handleDelete} name={e.name} id={e.id}>delete</button>
+          </div>)}
       </div>
     )
   } else {
     const copy = props.value.filter(e => e.name.includes(props.newSearch))
+    console.log(copy)
     return (
       <div>
-        {copy.map(e => <p key={e.name}>{e.name}: {e.number}</p>)}
+        {copy.map(e =>
+          <div key={e.name} number={e.number} name={e.name}>
+            {e.name}: {e.number}
+            <button key={e.name} onClick={props.handleDelete} name={e.name} id={e.id}>delete</button>
+          </div>)}
       </div>
     )
   }
@@ -54,8 +69,8 @@ const App = () => {
 
   useEffect(() => {
     console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
+    noteService
+      .getAll()
       .then(response => {
         console.log('promise fulfilled')
         setPersons(response.data)
@@ -76,17 +91,32 @@ const App = () => {
 
   const addPerson = (e) => {
     e.preventDefault()
+    const newObj = {
+      name: newName,
+      number: newNumber
+    }
     if (persons.map(e => e.name).includes(newName)) {
-      alert(newName + ' is already added to phonebook')
-    } else {
-      const newObj = {
-        name: newName,
-        number: newNumber
+      if(window.confirm(newName + ' is already added to phonebook, replace the old number with a new one?')){
+        const previousPerson = persons.find(p => p.name === newName)
+        noteService.update(previousPerson.id, {...previousPerson, number: newNumber})
+          .then(response => setPersons(persons.map(p => p.id !== previousPerson.id ? p : response.data)))
       }
-      setPersons(persons.concat(newObj))
+    } else {
+      noteService
+        .create(newObj)
+        .then(response => {
+          setPersons(persons.concat(response.data))
+        })
     }
     setNewName('')
     setNewNumber('')
+  }
+
+  const handleDelete = (e) => {
+    if (window.confirm('Dou you really want to delete ' + e.target.name + ' from the phonebook?')) {
+      noteService.deletePerson(e.target.id)
+        .then(() => setPersons(persons.filter(p => p.id != e.target.id)))
+    }
   }
 
   return (
@@ -108,6 +138,7 @@ const App = () => {
       <Numbers
         value={persons}
         newSearch={newSearch}
+        handleDelete={handleDelete}
       />
     </div>
   )
