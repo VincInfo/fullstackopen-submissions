@@ -55,18 +55,20 @@ const App = () => {
           .update(previousPerson.id, { ...previousPerson, number: newNumber })
           .then(response => setPersons(persons.map(p => p.id !== previousPerson.id ? p : response.data)))
           .catch(error => {
-            makeMessage("Changing number failed")
+            console.log(error)
+            makeMessage("Changing number failed, " + newName + " was already removed from the phonebook")
           })
-        makeMessage("Number changed successfully")
+        makeMessage("Number of " +  newName + " changed successfully")
       }
     } else {
       noteService
         .create(newObj)
         .then(response => {
           setPersons(persons.concat(response.data))
-          makeMessage("Person added successfully")
+          makeMessage(newName + " added successfully")
         })
         .catch(error => {
+          console.log(error)
           makeMessage("Adding person failed")
         })
     }
@@ -83,6 +85,7 @@ const App = () => {
           makeMessage("Person deleted successfully")
         })
         .catch(error => {
+          console.log(error)
           makeMessage("Deleting person failed")
         })
     }
