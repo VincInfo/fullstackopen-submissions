@@ -99,7 +99,7 @@ const App = () => {
         newSearch={newSearch}
         handleSearchChange={handleSearchChange}
       />
-      <h2>add an new</h2>
+      <h2>add new Person</h2>
       <PersonForm
         newName={newName}
         handleNameChange={handleNameChange}
