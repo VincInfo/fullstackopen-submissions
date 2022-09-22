@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import noteService from './services/notes'
+import personService from './services/notes'
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import PersonList from "./components/PersonList";
@@ -15,7 +15,7 @@ const App = () => {
 
   useEffect(() => {
     console.log('effect')
-    noteService
+    personService
       .getAll()
       .then(response => {
         console.log('promise fulfilled')
@@ -51,7 +51,7 @@ const App = () => {
     if (persons.map(e => e.name).includes(newName)) {
       if (window.confirm(newName + ' is already added to phonebook, replace the old number with a new one?')) {
         const previousPerson = persons.find(p => p.name === newName)
-        noteService
+        personService
           .update(previousPerson.id, { ...previousPerson, number: newNumber })
           .then(response => setPersons(persons.map(p => p.id !== previousPerson.id ? p : response.data)))
           .catch(error => {
@@ -61,7 +61,7 @@ const App = () => {
         makeMessage("Number of " +  newName + " changed successfully")
       }
     } else {
-      noteService
+      personService
         .create(newObj)
         .then(response => {
           setPersons(persons.concat(response.data))
@@ -69,7 +69,7 @@ const App = () => {
         })
         .catch(error => {
           console.log(error)
-          makeMessage("Adding person failed")
+          makeMessage(error.response.data.error)
         })
     }
     setNewName('')
@@ -78,7 +78,7 @@ const App = () => {
 
   const handleDelete = (e) => {
     if (window.confirm('Dou you really want to delete ' + e.target.name + ' from the phonebook?')) {
-      noteService
+      personService
         .deletePerson(e.target.id)
         .then(() => {
           setPersons(persons.filter(p => p.id != e.target.id))
