@@ -8,6 +8,17 @@
     color: red;
 }
 
+.body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+h1 {
+    color: blue;
+}
+
 .confirmMessage {
     background-color: rgb(209, 208, 208);
     border-radius: 5px;

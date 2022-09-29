@@ -92,7 +92,7 @@ const App = () => {
   }
 
   return (
-    <div>
+    <div className='body'>
       <h1>Phonebook</h1>
       <Notification message={message}/>
       <Filter

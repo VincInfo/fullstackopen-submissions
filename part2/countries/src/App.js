@@ -6,8 +6,6 @@ import getWeather from "./services/apixu";
 
 const Weather = ({ capital }) => {
   const [weather, setWeather] = useState([])
-  // Key: ee4fb7d1a1b956e57ad6b8268e247c41
-  // start with: REACT_APP_API_KEY=t0p53cr3t4p1k3yv4lu3 npm start // For Linux/macOS Bash
   const api_key = process.env.REACT_APP_API_KEY
   const url = new URL("https://api.openweathermap.org/data/2.5/weather?q=" + capital + "&appid=" + api_key)
 
