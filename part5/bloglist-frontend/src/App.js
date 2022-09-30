@@ -1,10 +1,11 @@
 import loginService from './services/login'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
+import Toggable from './components/Toggable'
 import './style.css'
 
 const App = () => {
@@ -25,19 +26,22 @@ const App = () => {
   }, [notification])
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      blogService.setToken(user.token)
-      getAllBlogs()
-    }
+    getAllBlogs()
   }, [])
 
   const getAllBlogs = async () => {
     const blogs = await blogService.getAll()
     setBlogs(blogs)
   }
+
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      blogService.setToken(user.token)
+    }
+  }, [])
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -60,6 +64,7 @@ const App = () => {
 
   const createBlog = async (BlogToAdd) => {
     try {
+      blogFormRef.current.toggleVisibility()
       const createdBlog = await blogService.create(BlogToAdd)
       setBlogs(blogs.concat(createdBlog))
       setNotification(`Blog ${BlogToAdd.title} successfully added`)
@@ -78,10 +83,13 @@ const App = () => {
     }
   }
 
+  const blogFormRef = useRef()
+
   return (
     <div>
       <h1>Blogs</h1>
       <Notification notification={notification} />
+
       {user === null ? (
         <LoginForm
           username={username}
@@ -96,11 +104,12 @@ const App = () => {
             <strong>{user.name}</strong>  logged-in
             <button onClick={handelLogOut}>log out</button>
           </p>
-
-          <BlogForm createBlog={createBlog} />
-          {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />
-          )}
+          <Toggable buttonLabel="new blog" ref={blogFormRef}>
+            <BlogForm createBlog={createBlog} />
+            {blogs.map(blog =>
+              <Blog key={blog.id} blog={blog} />
+            )}
+          </Toggable>
         </div>
       )
       }
