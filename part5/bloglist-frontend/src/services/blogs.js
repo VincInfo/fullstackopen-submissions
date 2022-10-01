@@ -8,8 +8,8 @@ const setToken = newToken => {
 }
 
 const getAll = async () => {
-  const request = await axios.get(baseUrl)
-  return request.data
+  const response = await axios.get(baseUrl)
+  return response.data
 }
 
 const create = async newObject => {
@@ -21,9 +21,9 @@ const create = async newObject => {
   return response.data
 }
 
-const update = async (id, newObject) => {
-  const request = await axios.put(`${baseUrl}/${id}`, newObject)
-  return request.data
+const update = async objectToUpdate => {
+  const response = await axios.put(`${baseUrl}/${objectToUpdate.id}`, objectToUpdate)
+  return response.data
 }
 
 export default { getAll, create, update, setToken }

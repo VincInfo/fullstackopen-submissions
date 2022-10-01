@@ -25,14 +25,6 @@ const App = () => {
     };
   }, [notification])
 
-  useEffect(() => {
-    getAllBlogs()
-  }, [])
-
-  const getAllBlogs = async () => {
-    const blogs = await blogService.getAll()
-    setBlogs(blogs)
-  }
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -40,8 +32,15 @@ const App = () => {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
       blogService.setToken(user.token)
+      getAllBlogs()
     }
   }, [])
+
+  const getAllBlogs = async () => {
+    const blogs = await blogService.getAll()
+    setBlogs(blogs)
+  }
+
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -72,6 +71,16 @@ const App = () => {
       setNotification(
         'error' + exception.response.data.error
       )
+    }
+  }
+
+  const updateBlog = async (BlogToUpdate) => {
+    try {
+      const updatedBlog = await blogService.update(BlogToUpdate)
+      setNotification(`blog ${BlogToUpdate.title} successfully updated`)
+      setBlogs(blogs.map(blog => blog.id !== BlogToUpdate.id ? blog : updatedBlog))
+    } catch (exception) {
+      setNotification('error', exception.response.data.error)
     }
   }
 
@@ -107,7 +116,7 @@ const App = () => {
           <Toggable buttonLabel="new blog" ref={blogFormRef}>
             <BlogForm createBlog={createBlog} />
             {blogs.map(blog =>
-              <Blog key={blog.id} blog={blog} />
+              <Blog key={blog.id} blog={blog} updateBlog={updateBlog}/> 
             )}
           </Toggable>
         </div>
