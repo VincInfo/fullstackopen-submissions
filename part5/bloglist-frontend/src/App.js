@@ -32,8 +32,11 @@ const App = () => {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
       blogService.setToken(user.token)
-      getAllBlogs()
     }
+  }, [])
+
+  useEffect(() => {
+    getAllBlogs()
   }, [])
 
   const getAllBlogs = async () => {
@@ -79,8 +82,21 @@ const App = () => {
       const updatedBlog = await blogService.update(BlogToUpdate)
       setNotification(`blog ${BlogToUpdate.title} successfully updated`)
       setBlogs(blogs.map(blog => blog.id !== BlogToUpdate.id ? blog : updatedBlog))
+      // getAllBlogs()
     } catch (exception) {
       setNotification('error', exception.response.data.error)
+    }
+  }
+
+  const deleteBlog = async (BlogToDelete) => {
+    try {
+      if (window.confirm(`Delete ${BlogToDelete.title} ?`)) {
+        await blogService.remove(BlogToDelete.id)
+        setNotification(`blog ${BlogToDelete.title} successfully deleted`)
+        setBlogs(blogs.filter(blog => blog.id !== BlogToDelete.id))
+      }
+    } catch (exception) {
+      setNotification('error ', exception.response.data.error)
     }
   }
 
@@ -113,10 +129,15 @@ const App = () => {
             <strong>{user.name}</strong>  logged-in
             <button onClick={handelLogOut}>log out</button>
           </p>
-          <Toggable buttonLabel="new blog" ref={blogFormRef}>
+          <Toggable buttonLabel='new blog' ref={blogFormRef}>
             <BlogForm createBlog={createBlog} />
-            {blogs.map(blog =>
-              <Blog key={blog.id} blog={blog} updateBlog={updateBlog}/> 
+            {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
+              <Blog
+                className='blog'
+                key={blog.id}
+                blog={blog}
+                updateBlog={updateBlog}
+                deleteBlog={deleteBlog} />
             )}
           </Toggable>
         </div>
