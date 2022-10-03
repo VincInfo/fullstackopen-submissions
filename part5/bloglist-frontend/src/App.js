@@ -77,9 +77,9 @@ const App = () => {
     }
   }
 
-  const updateBlog = async (BlogToUpdate) => {
+  const updateBlog = async (id, BlogToUpdate) => {
     try {
-      const updatedBlog = await blogService.update(BlogToUpdate)
+      const updatedBlog = await blogService.update(id, BlogToUpdate)
       setNotification(`blog ${BlogToUpdate.title} successfully updated`)
       setBlogs(blogs.map(blog => blog.id !== BlogToUpdate.id ? blog : updatedBlog))
       // getAllBlogs()
@@ -136,6 +136,7 @@ const App = () => {
                 className='blog'
                 key={blog.id}
                 blog={blog}
+                user={blog.user}
                 updateBlog={updateBlog}
                 deleteBlog={deleteBlog} />
             )}
