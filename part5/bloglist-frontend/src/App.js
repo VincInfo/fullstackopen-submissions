@@ -19,10 +19,10 @@ const App = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setNotification(null)
-    }, 5000);
+    }, 5000)
     return () => {
-      clearTimeout(timer);
-    };
+      clearTimeout(timer)
+    }
   }, [notification])
 
 
