@@ -30,7 +30,7 @@ const Blog = ({ blog, updateBlog, deleteBlog }) => {
   return (
     <div className="blog">
       <div className="blogTitle">
-        {blog.title} - {blog.author} <button onClick={toggleVisibility}>{buttonLabel}</button>
+        {blog.title} - {blog.author} <button id='show-button' onClick={toggleVisibility}>{buttonLabel}</button>
       </div>
       <div style={showWhenVisible} className="blogDetails">
         {blog.url} <br></br>
