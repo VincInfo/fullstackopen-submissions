@@ -50,7 +50,7 @@ describe('Blog app', function () {
       cy.contains('add')
     })
 
-    describe('and several blogs exist', function() {
+    describe('and several blogs exist', function () {
       beforeEach(function () {
         cy.contains('new blog').click()
         cy.get('#title').type('TestTitle1')
@@ -71,14 +71,14 @@ describe('Blog app', function () {
         cy.get('#add-button').click()
       })
 
-      it('User can like a blog', function() {
+      it('User can like a blog', function () {
         cy.contains('new blog').click()
         cy.contains('TestTitle2').parent().contains('show').click().parent().parent()
           .contains('like').click()
         cy.contains('blog TestTitle2 successfully updated')
       })
 
-      it.only('User can delete a blog', function() {
+      it('User can delete a blog', function () {
         cy.contains('new blog').click()
         cy.contains('TestTitle2').parent().contains('show').click().parent().parent()
           .contains('remove').click()
@@ -87,6 +87,31 @@ describe('Blog app', function () {
         // cy.contains('new blog').click()
         cy.should('not.contain', 'TestTitle2 - TestAuthor2')
       })
+
+      describe('and they have likes', async function () {
+        beforeEach(function () {
+          cy.contains('new blog').click()
+          cy.contains('TestTitle1').parent().contains('show').click().parent().parent()
+            .contains('like').click().wait(500).click()
+
+          // cy.contains('new blog').click()
+          cy.contains('TestTitle2').parent().contains('show').click().parent().parent()
+            .contains('like').click().wait(500).click().wait(500).click().wait(500).click()
+
+          // cy.contains('new blog').click()
+          cy.contains('TestTitle2').parent().contains('show').click().parent().parent()
+            .contains('like').click().wait(500).click().wait(500).click()
+        })
+
+        it.only('Blogs are ordered according to likes', function () {
+          cy.get('.blog').eq(0).should('contain', 'TestTitle2')
+          cy.get('.blog').eq(1).should('contain', 'TestTitle3')
+          cy.get('.blog').eq(2).should('contain', 'TestTitle1')
+
+        })
+      })
+
+
     })
   })
 })
