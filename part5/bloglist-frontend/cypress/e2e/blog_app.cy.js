@@ -91,14 +91,13 @@ describe('Blog app', function () {
       describe('and they have likes', async function () {
         beforeEach(function () {
           cy.contains('new blog').click()
+
           cy.contains('TestTitle1').parent().contains('show').click().parent().parent()
             .contains('like').click().wait(500).click()
 
-          // cy.contains('new blog').click()
           cy.contains('TestTitle2').parent().contains('show').click().parent().parent()
             .contains('like').click().wait(500).click().wait(500).click().wait(500).click()
 
-          // cy.contains('new blog').click()
           cy.contains('TestTitle2').parent().contains('show').click().parent().parent()
             .contains('like').click().wait(500).click().wait(500).click()
         })
