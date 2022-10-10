@@ -13,19 +13,17 @@ const App = () => {
 
   const [selected, setSelected] = useState(0)
   const [votes, setVotes] = useState(new Uint8Array(anecdotes.length))
-  const [mostVoted, setMostVoted] = useState(0)
 
   let next = () => {
     setSelected(Math.floor(Math.random() * anecdotes.length))
   }
 
+  const mostVoted = votes.indexOf(Math.max(...votes))
+
   let vote = () => {
     let copy = { ...votes };
     copy[selected] += 1;
     setVotes(copy);
-    if (votes[selected] >= votes[mostVoted]) {
-      setMostVoted(selected);
-    }
   }
 
   return (
