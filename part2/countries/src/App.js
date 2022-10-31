@@ -107,7 +107,7 @@ const Countries = (props) => {
     )
   }
 
-  if (copy.length > 1000) {
+  if (copy.length > 10) {
     return (
       <p>To many matches, specify filter</p>
     )
