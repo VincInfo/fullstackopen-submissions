@@ -19,7 +19,7 @@ const App = () => {
       .getAll()
       .then(response => {
         console.log('promise fulfilled')
-        setPersons(response.data)
+        setPersons(response)
       })
   }, [])
 
@@ -53,7 +53,7 @@ const App = () => {
         const previousPerson = persons.find(p => p.name === newName)
         personService
           .update(previousPerson.id, { ...previousPerson, number: newNumber })
-          .then(response => setPersons(persons.map(p => p.id !== previousPerson.id ? p : response.data)))
+          .then(response => setPersons(persons.map(p => p.id !== previousPerson.id ? p : response)))
           .catch(error => {
             console.log(error)
             makeMessage("Changing number failed, " + newName + " was already removed from the phonebook")
@@ -64,12 +64,12 @@ const App = () => {
       personService
         .create(newObj)
         .then(response => {
-          setPersons(persons.concat(response.data))
+          setPersons(persons.concat(response))
           makeMessage(newName + " added successfully")
         })
         .catch(error => {
           console.log(error)
-          makeMessage(error.response.data.error)
+          makeMessage(error.response.error)
         })
     }
     setNewName('')
